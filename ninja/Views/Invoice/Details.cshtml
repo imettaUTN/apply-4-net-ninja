@@ -1,0 +1,74 @@
+﻿@model ninja.model.Entity.Invoice
+@{
+    ViewBag.Title = "Factura #" + Model.Id;
+}
+
+<h2 class="page-header">Factura #@Model.Id.ToString()</h2>
+     <div class="row">
+         <div class="col-xs-12">
+             <ul id="facturador-detalle" class="list-group">
+                 <li class="list-inline">
+                     <div class="row">
+                         @Html.Label("Tipo", htmlAttributes: new { @class = "control-label col-md-2" })
+                         @Html.TextBoxFor(m => m.Type, new { @class = "form-control", @readonly = "readonly" })
+                     </div>
+                 </li>
+                 <li class="invisible">
+                 </li>
+                 <li class="list-group-item">
+                     <div class="row">
+                         <div class="col-xs-2">
+                             <b>Descripcion</b>
+                         </div>
+                         <div class="col-xs-2 text-left">
+                             <b>Cantidad</b>
+                         </div>
+                         <div class="col-xs-2 text-left">
+                             <b>Precio Unitario</b>
+                         </div>
+                         <div class="col-xs-2 text-left">
+                             <b>Monto</b>
+                         </div>
+                         <div class="col-xs-2 text-left">
+                             <b>Monto c/Impuestos</b>
+                         </div>
+                     </div>
+                 </li>
+                 @foreach (var d in Model.GetDetail())
+                 {
+                     <li class="list-group-item">
+                         <div class="row">
+                             <div class="col-xs-2">
+                                 @d.Description
+                             </div>
+                             <div class="col-xs-2 text-left">
+                                 @d.Amount
+                             </div>
+                             <div class="col-xs-2 text-left">
+                                 @string.Format("{0:c}", d.UnitPrice)
+                             </div>
+                             <div class="col-xs-2 text-left">
+                                 @string.Format("{0:c}", d.TotalPrice)
+                             </div>
+                             <div class="col-xs-2 text-left">
+                                 @string.Format("{0:c}", d.TotalPriceWithTaxes)
+                             </div>
+                         </div>
+                     </li>
+                 }
+                 @if (Model.GetDetail().Count > 0)
+                 {
+                     <li class="list-group-item text-right" style="font-size:12px;">
+                         <b> Total s/Impuestos:  @string.Format("{0:c}", Model.CalculateInvoiceTotalPriceWithOutTaxes())</b>
+                     </li>
+                     <li class="list-group-item text-right" style="font-size:12px;">
+                         <b> Total c/Impuestos:  @string.Format("{0:c}", Model.CalculateInvoiceTotalPriceWithTaxes())</b><br>
+                     </li>
+                 }
+             </ul>
+         </div>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>

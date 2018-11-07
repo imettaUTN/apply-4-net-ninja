@@ -1,0 +1,172 @@
+﻿@model ninja.Models.InvoiceViewModels
+@{
+    ViewBag.Title = "Registrar";
+}
+
+<h2 class="page-header">Nueva Factura</h2>
+
+@using (Html.BeginForm("Create", "Invoice", FormMethod.Post, new { id = "frm-comprobante" }))
+{
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-2">
+                        @Html.Label("Numero Factura")
+                        @Html.TextBoxFor(x => x.CabeceraId, new { @class = "form-control", placeholder = "Ingrese el numero de factura", @onchange = "ValidarInputs();" })
+                    </div>
+                    <div class="col-xs-2">
+                        @Html.Label("Tipo")
+                        @Html.TextBoxFor(x => x.CabeceraTipo, new { @class = "form-control", placeholder = "Ingrese el Tipo", @onchange = "ValidarInputs();" })
+                        @Html.ValidationMessage("Tipo", null, new { @class = "label label-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-xs-7" id="descripcionDetalle">
+                        @Html.TextBoxFor(x => x.descripcionDetalle, new { style = "width:500px;max-width: 500px;", @class = "form-control", placeholder = "Descripcion", id = "DetalleFactura", @onchange = "ValidarInputs();" })
+                    </div>
+                    <div class="col-xs-2">
+                        @Html.TextBoxFor(x => x.CabeceraDetalleCantidad, new { @class = "form-control", placeholder = "Cantidad", @onchange = "ValidarInputs();" })
+                    </div>
+                    <div class="col-xs-2">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">$</span>
+                            @Html.TextBoxFor(x => x.CabeceraDetallePrecio, new { @class = "form-control", placeholder = "Precio", @onchange = "ValidarInputs();" })
+                        </div>
+                    </div>
+                    <div class="col-xs-1">
+                        <button class="btn btn-primary" id="btnAgregarFactura" type="submit" value="agregarItemFactura" name="action">
+                            <i class="glyphicon glyphicon-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <ul id="facturador-detalle" class="list-group">
+                @if (Model.FacturaDetalle.Count > 0)
+                {
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-xs-1"></div>
+                            <div class="col-xs-5">
+                                <b>Factura</b>
+                            </div>
+                            <div class="col-xs-2 text-center">
+                                <b>Cantidad</b>
+                            </div>
+                            <div class="col-xs-2 text-right">
+                                <b>Precio Unitario</b>
+                            </div>
+                            <div class="col-xs-2 text-right">
+                                <b>Monto</b>
+                            </div>
+                        </div>
+                    </li>
+                }
+                @foreach (var d in Model.FacturaDetalle)
+                {
+                    var i = Model.FacturaDetalle.IndexOf(d);
+                    <li class="list-group-item">
+                        <!-- Modelo -->
+                        @Html.Hidden("FacturaDetalle[" + i + "].DetalleId", d.DetalleId)
+                        @Html.Hidden("FacturaDetalle[" + i + "].InvoiceId", d.InvoiceId)
+                        @Html.Hidden("FacturaDetalle[" + i + "].descripcion", d.descripcion)
+                        @Html.Hidden("FacturaDetalle[" + i + "].PrecioUnitario", d.PrecioUnitario)
+                        @Html.Hidden("FacturaDetalle[" + i + "].Cantidad", d.Cantidad)
+                        @Html.Hidden("FacturaDetalle[" + i + "].Retirar", d.Retirar, new { @class = "retirar" })
+
+                        <div class="row">
+                            <div class="col-xs-1 text-right">
+                                <button class="btn btn-danger btn-xs btn-block btn-retirar" type="submit" value="retirarFactura" name="action">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </button>
+                            </div>
+                            <div class="col-xs-5">
+                                @d.descripcion
+                            </div>
+                            <div class="col-xs-2 text-center">
+                                @d.Cantidad
+                            </div>
+                            <div class="col-xs-2 text-right">
+                                @string.Format("{0:c}", d.PrecioUnitario)
+                            </div>
+                            <div class="col-xs-2 text-right">
+                                @string.Format("{0:c}", d.Monto())
+                            </div>
+                        </div>
+                    </li>
+                }
+                @if (Model.FacturaDetalle.Count > 0)
+                {
+                    <li class="list-group-item text-right" style="font-size:18px;">
+                        @string.Format("{0:c}", Model.Total())
+                    </li>
+                }
+            </ul>
+
+            @if (Model.FacturaDetalle.Count > 0)
+            {
+                <button class="btn btn-primary btn-block btn-lg" type="submit" value="generarFactura" name="action">Generar comprobante</button>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            LimpiarAgregarProducto();
+              $(".btn-retirar").click(function () {
+                if (confirm('¿Está seguro de retirar el item seleccionado?')) {
+                    $(this).closest('.list-group-item').find('.retirar').val("True");
+                    return true;
+                }
+
+                return false;
+            })
+        })
+        function ValidarInputs() {
+            var valueToValid = $("#DetalleFactura").val();
+            if ($("#CabeceraId").val() == '') {
+                alert("Ingrese numero factura");
+                $("#btnAgregarFactura").attr("disabled", true);
+            }
+            else {
+                $("#btnAgregarFactura").attr("disabled", false);
+            }
+            if ($("#CabeceraTipo").val() == '') {
+                alert("Ingrese tipo factura");
+                $("#btnAgregarFactura").attr("disabled", true);
+            }
+            else {
+                $("#btnAgregarFactura").attr("disabled", false);
+            }
+            $("#facturador-detalle li").each(function (indice) {
+                if (indice > 0) {
+                    var i = indice - 1;
+                    if ($("#FacturaDetalle_" + i + "__descripcion").val() == valueToValid) {
+                        alert("La descripcion " + valueToValid + " ya fue ingresada");
+                        $("#btnAgregarFactura").attr("disabled", true);
+                    }
+                    else {
+                        $("#btnAgregarFactura").attr("disabled", false);
+                    }
+                }
+            });
+
+        }
+            function LimpiarAgregarProducto() {
+                $("#CabeceraProductoId").val("");
+                $("#DetalleFactura").val("");
+                $("#CabeceraDetallePrecio").val("");
+                $("#CabeceraDetalleCantidad").val(1);
+            }
+
+    </script>
+}
