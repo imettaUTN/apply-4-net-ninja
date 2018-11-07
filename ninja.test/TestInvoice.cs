@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ninja.model.Entity;
 using ninja.model.Manager;
+using ninja.model.Mock;
 
 namespace ninja.test {
 
@@ -72,8 +73,27 @@ namespace ninja.test {
             */
 
             #region Escribir el código dentro de este bloque
+            //Pongo en un solo lugar el id a borrar, para hacer reutilizable el metodo con distintos ids.
+            long sIdFacturaABorrar = 4;
+            InvoiceMock sManager = InvoiceMock.GetInstance();
+            //Valido que la factura con id 4 exista,Sino existe que tire excepcion.
+            if (!sManager.Exists(sIdFacturaABorrar))
+            {
+               Assert.Fail("La Factura id=4 no existe");
+            }
 
-            throw new NotImplementedException();
+            //Busco la factura por id 
+            Invoice sFacturaABorrar = sManager.GetById(sIdFacturaABorrar);
+
+            //Borro la factura
+            sManager.Delete(sFacturaABorrar);
+            //Valido que se haya borrado la factura.
+            if (sManager.Exists(4))
+            {
+                Assert.Fail("La Factura id=4 no se ha borrado correctamente");
+            }
+
+            Assert.AreEqual(sFacturaABorrar.Id, sIdFacturaABorrar);
 
             #endregion Escribir el código dentro de este bloque
 
@@ -111,9 +131,12 @@ namespace ninja.test {
 
         [TestMethod]
         public void CalculateInvoiceTotalPriceWithTaxes() {
-
-            long id = 1005;
+            //se cambia el id de la factura por uno existente.
+            long id = 1003;
             InvoiceManager manager = new InvoiceManager();
+            if (!manager.Exists(id)) {
+                throw new Exception("La factura con id =" + id + " no existe");
+            }
             Invoice invoice = manager.GetById(id);
 
             double sum = 0;

@@ -27,7 +27,7 @@ namespace ninja.model.Mock {
         /// <summary>
         /// Mock DB
         /// </summary>
-        private IList<Invoice> _db;
+        private List<Invoice> _db;
 
         private InvoiceMock() {
 
@@ -38,6 +38,12 @@ namespace ninja.model.Mock {
         }
 
         private void Init() {
+
+            this._db.Add(new Invoice()
+            {
+                Id = 4,
+                Type = Invoice.Types.A.ToString()
+            });
 
             this._db.Add(new Invoice() {
                 Id = 1000,
@@ -81,7 +87,7 @@ namespace ninja.model.Mock {
 
         }
 
-        public IList<Invoice> GetAll() {
+        public List<Invoice> GetAll() {
 
             return this._db;
 

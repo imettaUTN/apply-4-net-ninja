@@ -17,6 +17,7 @@ namespace ninja.model.Manager {
             this._mock = InvoiceMock.GetInstance();
 
         }
+        public IList<Invoice> Facturas { get; set; }
 
         public IList<Invoice> GetAll() {
 
@@ -57,8 +58,22 @@ namespace ninja.model.Manager {
              */
 
             #region Escribir el código dentro de este bloque
+            if (!this._mock.Exists(id)) { throw new Exception("No existe Factura"); }
+            //Busco la factura por el id dado por parametro en el mock
+            Invoice Factura = this._mock.GetById(id);
+            /*Por cada Detalle de factura recibido:
+             * Borro el detalle de la factura s/id
+             * Agrego el detalle de la factura actualizado.
+            */
+            foreach(InvoiceDetail sinvD in detail){
+                if (Factura.ExistsDetail(sinvD.Id))
+                {
+                    Factura.DeleteDetail(sinvD.Id);
+                }
+            // Se agrega a la factura si no existe.
+                Factura.AddDetail(sinvD);                
+            }
 
-            throw new NotImplementedException();
 
             #endregion Escribir el código dentro de este bloque
 

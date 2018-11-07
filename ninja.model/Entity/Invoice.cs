@@ -33,6 +33,12 @@ namespace ninja.model.Entity {
             return this.Detail;
 
         }
+        public InvoiceDetail  GetDetail(long xid)
+        {
+
+            return this.Detail.Where(x => x.Id == xid).FirstOrDefault();
+
+        }
 
         public void AddDetail(InvoiceDetail detail) {
 
@@ -45,7 +51,31 @@ namespace ninja.model.Entity {
             this.Detail.Clear();
 
         }
+        /// <summary>
+        /// Borra un detalle de la factura
+        /// </summary>
+        /// <param name="id"></param>
+        public void DeleteDetail(long xDetailID)
+        {
+            //Valido que exista el detalle a eliminar
+            if (!ExistsDetail(xDetailID)) {
+                throw new Exception("No existe Factura");
+            }
+            InvoiceDetail invDetail = this.GetDetail().Where(x => x.Id == xDetailID).FirstOrDefault();
 
+            this.Detail.Remove(invDetail);
+
+        }
+        /// <summary>
+        /// Evalua si existe el detallle de una factura.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool ExistsDetail(long xDetailID) {
+            InvoiceDetail invDetail = this.GetDetail().Where(x => x.Id == xDetailID).FirstOrDefault();
+
+            return this.GetDetail().IndexOf(invDetail) >-1;
+        }
         /// <summary>
         /// Sumar el TotalPrice de cada elemento del detalle
         /// </summary>
@@ -60,7 +90,17 @@ namespace ninja.model.Entity {
             return sum;
 
         }
+        public double CalculateInvoiceTotalPriceWithOutTaxes()
+        {
 
+            double sum = 0;
+
+            foreach (InvoiceDetail item in this.Detail)
+                sum += item.TotalPrice;
+
+            return sum;
+
+        }
     }
 
 }
