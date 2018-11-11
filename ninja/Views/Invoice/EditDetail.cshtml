@@ -1,36 +1,28 @@
-﻿@model ninja.model.Entity.InvoiceDetail
+﻿@model ninja.Models.InvoicesDetailViewModel
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Detalle Item</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.DetailID)
 
         <div class="form-group">
-            @Html.Label("Numero Item", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("#Item", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Id, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Id, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.DetailID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DetailID, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.Label("Descripcion", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Monto", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -44,12 +36,21 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <button class="btn btn-primary btn-group-sm" type="submit" value="Save">Save</button>
             </div>
         </div>
     </div>
 }
 
-    <div>
-        @Html.ActionLink("Back", "Edit/"+Model.InvoiceId)
-    </div>
+<div>
+    @Html.ActionLink("Back", "Edit/" + Model.InvoiceId)
+</div>
+@section Scripts{
+    <script>
+        $("#DetailID").on('input', function (e) {
+            if (!/^[\d]*$/i.test(this.value)) {
+                this.value = this.value.replace(/[^\d]+/ig, "");
+            }
+        });
+    </script>
+}

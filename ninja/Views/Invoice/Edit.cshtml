@@ -1,11 +1,11 @@
-﻿@model ninja.model.Entity.Invoice
+﻿@model ninja.Models.InvoiceViewModels
 
 @{
     ViewBag.Title = "Edit";
 }
 
-<h3>Edit Invoice #@Model.Id</h3>
-<a class="btn btn-primary pull-right" href="~/Invoice/CreateDetail?xInvoiceId=@Model.Id">Nuevo Item</a>
+<h3>Edit invoice nro.: #@Model.InvoiceId</h3>
+<a class="btn btn-primary pull-right" href="~/Invoice/CreateDetail?xInvoiceId=@Model.InvoiceId">New Item</a>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -13,50 +13,57 @@
     <div class="form-horizontal" style="text-align:left">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.InvoiceId)
 
         <div class="col-xs-12">
             <div class="form-group" style="align-content:flex-start">
                 <div class="col-xs-3 text-left">
-                    @Html.Label("Tipo", htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.Label("#", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.InvoiceId, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.InvoiceId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-xs-3 text-left">
+                    @Html.Label("Type", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
                         @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
                     </div>
                 </div>
             </div>
-            <ul id="facturador-detalle" class="list-group">
+            <ul id="invoicedor-detalle" class="list-group">
                 <li class="list-group-item">
                     <div class="row">
                         <div class="col-xs-1">
                             <b>#Item</b>
                         </div>
                         <div class="col-xs-2">
-                            <b>Descripcion</b>
+                            <b>Description</b>
                         </div>
                         <div class="col-xs-1 text-left">
-                            <b>Cantidad</b>
+                            <b>Amount</b>
                         </div>
                         <div class="col-xs-2 text-left">
-                            <b>Precio Unitario</b>
+                            <b>Unit Price</b>
                         </div>
                         <div class="col-xs-2 text-left">
-                            <b>Monto</b>
+                            <b>Total Amount</b>
                         </div>
                         <div class="col-xs-2 text-left">
-                            <b>Monto c/Impuestos</b>
+                            <b>Total Amount w/Taxes</b>
                         </div>
                     </div>
                 </li>
-                @foreach (var d in Model.GetDetail())
+                @foreach (var d in Model.InvoiceDetail)
                 {
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col-xs-1 text-center">
-                                @d.Id
+                                @d.DetailID
                             </div>
                             <div class="col-xs-2">
-                                @Html.ActionLink(d.Description, "InvoiceDetail", new { xInvoiceId = Model.Id, xDetalleId = d.Id })
+                                @Html.ActionLink(d.Description, "InvoiceDetail", new { xInvoiceId = Model.InvoiceId, xDetailID = d.DetailID })
                             </div>
                             <div class="col-xs-1 text-center">
                                 @d.Amount
@@ -71,33 +78,36 @@
                                 @string.Format("{0:c}", d.TotalPriceWithTaxes)
                             </div>
                             <div class="col-xs-2 text-left">
-                                @Html.ActionLink("Edit", "EditDetail", new { xInvoiceId = Model.Id, xDetalleId = d.Id }) |
-                                @Html.ActionLink("Delete", "DeleteDetail", new { xInvoiceId = Model.Id, xDetalleId = d.Id })
+                                @Html.ActionLink("Edit", "EditDetail", new { xInvoiceId = Model.InvoiceId, xDetailID = d.DetailID }) |
+                                @Html.ActionLink("Delete", "DeleteDetail", new { xInvoiceId = Model.InvoiceId, xDetailID = d.DetailID })
                             </div>
                         </div>
                     </li>
                 }
-                @if (Model.GetDetail().Count > 0)
+                @if (Model.InvoiceDetail.Count > 0)
                 {
                     <li class="list-group-item text-right" style="font-size:12px;">
-                        <b> Total s/Impuestos:  @string.Format("{0:c}", Model.CalculateInvoiceTotalPriceWithOutTaxes())</b>
+                        <b> Total s/Taxes:  @string.Format("{0:c}", Model.CalculateInvoiceTotalPriceWithOutTaxes())</b>
                     </li>
                     <li class="list-group-item text-right" style="font-size:12px;">
-                        <b> Total c/Impuestos:  @string.Format("{0:c}", Model.CalculateInvoiceTotalPriceWithTaxes())</b><br>
+                        <b> Total c/Taxes:  @string.Format("{0:c}", Model.CalculateInvoiceTotalPriceWithTaxes())</b><br>
                     </li>
                 }
             </ul>
         </div>
-        <div class="form-group">
-            <div class="col-xs-1 text-right">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Grabar Tipo" class="btn btn-default" />
-                </div>
-            </div>
+        <div class="btn-group-sm">
+            <button class="btn btn-primary btn-group-sm " type="submit" value="SaveType" name="aceptar">Save</button>
+            @Html.ActionLink("Back", "Index")
+
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Back", "Index")
-</div>
+@section Scripts{
+    <script>
+        $("#InvoiceID").on('input', function (e) {
+            if (!/^[\d]*$/i.test(this.value)) {
+                this.value = this.value.replace(/[^\d]+/ig, "");
+            }
+        });
+    </script>
+}

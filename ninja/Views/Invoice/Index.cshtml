@@ -1,53 +1,33 @@
-﻿@model IList<ninja.model.Entity.Invoice>
+﻿@model IList<ninja.Models.InvoiceViewModels>
 @{
     ViewBag.Title = "Home Page";
 }
 <h2 class="page-header">
-    <a class="btn btn-primary pull-right" href="~/Invoice/Create">Nueva Factura</a>
-    Facturas
+    <a class="btn btn-primary pull-right" href="~/Invoice/Create">New Invoice</a>
+    Invoices
 </h2>
 
-<table class="table table-bordered table-striped" id="ListadoFacturas">
+<table class="table table-bordered table-striped" id="ListadoInvoices">
     <thead>
         <tr>
-            <th class="text-center" style="width:210px">Numero Factura</th>
-            <th class="text-center" style="width:80px">Tipo</th>
+            <th class="text-center" style="width:210px">Invoice Number</th>
+            <th class="text-center" style="width:80px">Type</th>
             <th class="text-center" style="width:10px"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @Html.ActionLink(item.Id.ToString(), "Details", new { id = item.Id })
-            </td>
-            <td class="text-center">@item.Type</td>
-            <td style="text-align:center;">
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.ActionLink(item.InvoiceId.ToString(), "Details", new { id = item.InvoiceId })
+                </td>
+                <td class="text-center">@item.Type</td>
+                <td style="text-align:center;">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.InvoiceId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.InvoiceId })
+                </td>
+            </tr>
         }
     </tbody>
 </table>
-@section Scripts{
-    <script>
-
-        function DeleteItem(id) {
-            var params = { xId: id };
-
-        var miUrl = '@Url.Action("Borrar","Invoice")'
-        $.ajax({
-            url: miUrl,
-            method: "post",
-            data: params,
-            success: function (response) {
-                location.reload();
-            },
-        });
-
-
-        }
-    </script>
-}

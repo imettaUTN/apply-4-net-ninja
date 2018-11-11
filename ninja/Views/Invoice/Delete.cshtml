@@ -1,25 +1,25 @@
-﻿@model ninja.model.Entity.Invoice
+﻿@model ninja.Models.InvoiceViewModels
 
 @{
     ViewBag.Title = "Delete";
 }
-<h3>¿ Esta seguro que quiere borrar esta Factura?</h3>
+<h3>¿Esta seguro que quiere la invoice nro.: @Model.InvoiceId?</h3>
 <div>
     <hr />
-    <div class="row">
-        <dl class="dl-horizontal">
+    <div class="arrow" style="text-align:left">
+        <dl>
             <dt>
-                @Html.Label("Numero Factura")
+                @Html.Label("Numero Invoice")
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Id)
+                @Html.DisplayFor(model => model.InvoiceId)
             </dd>
 
         </dl>
-        <dl class="dl-horizontal">
+        <dl>
             <dt>
-                @Html.Label("Tipo")
+                @Html.Label("Type")
             </dt>
 
             <dd>
@@ -28,13 +28,13 @@
 
         </dl>
     </div>
-        @using (Html.BeginForm())
-        {
-            @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-            <div class="form-actions no-color">
-                <input type="submit" value="Delete" class="btn btn-default" /> |
-                @Html.ActionLink("Back", "Index")
-            </div>
+        <div class="btn-group-sm" >
+            <button class="btn btn-primary btn-group-sm " type="submit" value="aceptar" name="aceptar">Aceptar</button>
+            <button class="btn btn-primary btn-group-sm" type="submit" value="cancelar" name="action">Cancelar</button>
+         </div>
         }
     </div>

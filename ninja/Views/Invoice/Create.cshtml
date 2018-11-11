@@ -3,7 +3,7 @@
     ViewBag.Title = "Registrar";
 }
 
-<h2 class="page-header">Nueva Factura</h2>
+<h2 class="page-header">New Invoice</h2>
 
 @using (Html.BeginForm("Create", "Invoice", FormMethod.Post, new { id = "frm-comprobante" }))
 {
@@ -13,33 +13,33 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-xs-2">
-                        @Html.Label("Numero Factura")
-                        @Html.TextBoxFor(x => x.CabeceraId, new { @class = "form-control", placeholder = "Ingrese el numero de factura", @onchange = "ValidarInputs();" })
+                        @Html.Label("#Invoice")
+                        @Html.TextBoxFor(x => x.InvoiceId, new { @class = "form-control", placeholder = "Ingrese el numero de invoice", @onchange = "ValidarInputs();" })
                     </div>
                     <div class="col-xs-2">
-                        @Html.Label("Tipo")
-                        @Html.TextBoxFor(x => x.CabeceraTipo, new { @class = "form-control", placeholder = "Ingrese el Tipo", @onchange = "ValidarInputs();" })
-                        @Html.ValidationMessage("Tipo", null, new { @class = "label label-danger" })
+                        @Html.Label("Type")
+                        @Html.TextBoxFor(x => x.Type, new { @class = "form-control", placeholder = "Ingrese el Type", @onchange = "ValidarInputs();" })
+                        @Html.ValidationMessage("Type", null, new { @class = "label label-danger" })
                     </div>
                 </div>
             </div>
 
             <div class="well well-sm">
                 <div class="row">
-                    <div class="col-xs-7" id="descripcionDetalle">
-                        @Html.TextBoxFor(x => x.descripcionDetalle, new { style = "width:500px;max-width: 500px;", @class = "form-control", placeholder = "Descripcion", id = "DetalleFactura", @onchange = "ValidarInputs();" })
+                    <div class="col-xs-7" id="DescriptionDetalle">
+                        @Html.TextBoxFor(x => x.DetailDescription, new { style = "width:500px;max-width: 500px;", @class = "form-control", placeholder = "Description", id = "DetalleInvoice", @onchange = "ValidarInputs();" })
                     </div>
                     <div class="col-xs-2">
-                        @Html.TextBoxFor(x => x.CabeceraDetalleCantidad, new { @class = "form-control", placeholder = "Cantidad", @onchange = "ValidarInputs();" })
+                        @Html.TextBoxFor(x => x.DetailCount, new { @class = "form-control", placeholder = "Amount", @onchange = "ValidarInputs();" })
                     </div>
                     <div class="col-xs-2">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">$</span>
-                            @Html.TextBoxFor(x => x.CabeceraDetallePrecio, new { @class = "form-control", placeholder = "Precio", @onchange = "ValidarInputs();" })
+                            @Html.TextBoxFor(x => x.DetailPrice, new { @class = "form-control", placeholder = "Price", @onchange = "ValidarInputs();" })
                         </div>
                     </div>
                     <div class="col-xs-1">
-                        <button class="btn btn-primary" id="btnAgregarFactura" type="submit" value="agregarItemFactura" name="action">
+                        <button class="btn btn-primary" id="btnAgregarInvoice" type="submit" value="agregarItemInvoice" name="action">
                             <i class="glyphicon glyphicon-plus"></i>
                         </button>
                     </div>
@@ -48,20 +48,20 @@
 
             <hr />
 
-            <ul id="facturador-detalle" class="list-group">
-                @if (Model.FacturaDetalle.Count > 0)
+            <ul id="invoicedor-detalle" class="list-group">
+                @if (Model.InvoiceDetail.Count > 0)
                 {
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col-xs-1"></div>
                             <div class="col-xs-5">
-                                <b>Factura</b>
+                                <b>Invoice</b>
                             </div>
                             <div class="col-xs-2 text-center">
-                                <b>Cantidad</b>
+                                <b>Amount</b>
                             </div>
                             <div class="col-xs-2 text-right">
-                                <b>Precio Unitario</b>
+                                <b>Price Unitario</b>
                             </div>
                             <div class="col-xs-2 text-right">
                                 <b>Monto</b>
@@ -69,40 +69,40 @@
                         </div>
                     </li>
                 }
-                @foreach (var d in Model.FacturaDetalle)
+                @foreach (var d in Model.InvoiceDetail)
                 {
-                    var i = Model.FacturaDetalle.IndexOf(d);
+                    var i = Model.InvoiceDetail.IndexOf(d);
                     <li class="list-group-item">
                         <!-- Modelo -->
-                        @Html.Hidden("FacturaDetalle[" + i + "].DetalleId", d.DetalleId)
-                        @Html.Hidden("FacturaDetalle[" + i + "].InvoiceId", d.InvoiceId)
-                        @Html.Hidden("FacturaDetalle[" + i + "].descripcion", d.descripcion)
-                        @Html.Hidden("FacturaDetalle[" + i + "].PrecioUnitario", d.PrecioUnitario)
-                        @Html.Hidden("FacturaDetalle[" + i + "].Cantidad", d.Cantidad)
-                        @Html.Hidden("FacturaDetalle[" + i + "].Retirar", d.Retirar, new { @class = "retirar" })
+                        @Html.Hidden("InvoiceDetail[" + i + "].DetailID", d.DetailID)
+                        @Html.Hidden("InvoiceDetail[" + i + "].InvoiceId", d.InvoiceId)
+                        @Html.Hidden("InvoiceDetail[" + i + "].Description", d.Description)
+                        @Html.Hidden("InvoiceDetail[" + i + "].UnitPrice", d.UnitPrice)
+                        @Html.Hidden("InvoiceDetail[" + i + "].Amount", d.Amount)
+                        @Html.Hidden("InvoiceDetail[" + i + "].RemoveItem", d.RemoveItem, new { @class = "retirar" })
 
                         <div class="row">
                             <div class="col-xs-1 text-right">
-                                <button class="btn btn-danger btn-xs btn-block btn-retirar" type="submit" value="retirarFactura" name="action">
+                                <button class="btn btn-danger btn-xs btn-block btn-retirar" type="submit" value="retirarInvoice" name="action">
                                     <i class="glyphicon glyphicon-remove"></i>
                                 </button>
                             </div>
                             <div class="col-xs-5">
-                                @d.descripcion
+                                @d.Description
                             </div>
                             <div class="col-xs-2 text-center">
-                                @d.Cantidad
+                                @d.Amount
                             </div>
                             <div class="col-xs-2 text-right">
-                                @string.Format("{0:c}", d.PrecioUnitario)
+                                @string.Format("{0:c}", d.UnitPrice)
                             </div>
                             <div class="col-xs-2 text-right">
-                                @string.Format("{0:c}", d.Monto())
+                                @string.Format("{0:c}", d.PriceWithTaxes())
                             </div>
                         </div>
                     </li>
                 }
-                @if (Model.FacturaDetalle.Count > 0)
+                @if (Model.InvoiceDetail.Count > 0)
                 {
                     <li class="list-group-item text-right" style="font-size:18px;">
                         @string.Format("{0:c}", Model.Total())
@@ -110,19 +110,22 @@
                 }
             </ul>
 
-            @if (Model.FacturaDetalle.Count > 0)
+            @if (Model.InvoiceDetail.Count > 0)
             {
-                <button class="btn btn-primary btn-block btn-lg" type="submit" value="generarFactura" name="action">Generar comprobante</button>
+                <button class="btn btn-primary btn-block btn-lg" type="submit" value="generarInvoice" name="action">Generar comprobante</button>
             }
         </div>
     </div>
 }
 
+<div>
+    @Html.ActionLink("Back", "Index")
+</div>
 @section Scripts{
     <script>
         $(document).ready(function () {
             LimpiarAgregarProducto();
-              $(".btn-retirar").click(function () {
+            $(".btn-retirar").click(function () {
                 if (confirm('¿Está seguro de retirar el item seleccionado?')) {
                     $(this).closest('.list-group-item').find('.retirar').val("True");
                     return true;
@@ -131,42 +134,48 @@
                 return false;
             })
         })
+        $("#InvoiceId").on('input', function (e) {
+            if (!/^[\d]*$/i.test(this.value)) {
+                this.value = this.value.replace(/[^\d]+/ig, "");
+            }
+        });
+
         function ValidarInputs() {
-            var valueToValid = $("#DetalleFactura").val();
-            if ($("#CabeceraId").val() == '') {
-                alert("Ingrese numero factura");
-                $("#btnAgregarFactura").attr("disabled", true);
+            var valueToValid = $("#DetalleInvoice").val();
+            if ($("#InvoiceId").val() == '') {
+                alert("Ingrese numero invoice");
+                $("#btnAgregarInvoice").attr("disabled", true);
             }
             else {
-                $("#btnAgregarFactura").attr("disabled", false);
+                $("#btnAgregarInvoice").attr("disabled", false);
             }
-            if ($("#CabeceraTipo").val() == '') {
-                alert("Ingrese tipo factura");
-                $("#btnAgregarFactura").attr("disabled", true);
+            if ($("#Type").val() == '') {
+                alert("Ingrese tipo invoice");
+                $("#btnAgregarInvoice").attr("disabled", true);
             }
             else {
-                $("#btnAgregarFactura").attr("disabled", false);
+                $("#btnAgregarInvoice").attr("disabled", false);
             }
-            $("#facturador-detalle li").each(function (indice) {
+            $("#invoicedor-detalle li").each(function (indice) {
                 if (indice > 0) {
                     var i = indice - 1;
-                    if ($("#FacturaDetalle_" + i + "__descripcion").val() == valueToValid) {
-                        alert("La descripcion " + valueToValid + " ya fue ingresada");
-                        $("#btnAgregarFactura").attr("disabled", true);
+                    if ($("#InvoiceDetail_" + i + "__Description").val() == valueToValid) {
+                        alert("La Description " + valueToValid + " ya fue ingresada");
+                        $("#btnAgregarInvoice").attr("disabled", true);
                     }
                     else {
-                        $("#btnAgregarFactura").attr("disabled", false);
+                        $("#btnAgregarInvoice").attr("disabled", false);
                     }
                 }
             });
 
         }
-            function LimpiarAgregarProducto() {
-                $("#CabeceraProductoId").val("");
-                $("#DetalleFactura").val("");
-                $("#CabeceraDetallePrecio").val("");
-                $("#CabeceraDetalleCantidad").val(1);
-            }
+        function LimpiarAgregarProducto() {
+            $("#CabeceraProductoId").val("");
+            $("#DetalleInvoice").val("");
+            $("#DetailPrice").val("");
+            $("#DetailCount").val(1);
+        }
 
     </script>
 }

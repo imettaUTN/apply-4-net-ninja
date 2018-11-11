@@ -1,19 +1,19 @@
-﻿@model ninja.model.Entity.InvoiceDetail
+﻿@model ninja.Models.InvoicesDetailViewModel
 
 <h3>¿ Esta seguro que quiere borrar este item?</h3>
 <div>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.Label("Numero Item", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("#Item", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Id)
+            @Html.DisplayFor(model => model.DetailID)
         </dd>
 
         <dt>
-            @Html.Label("Descripcion", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-2" })
         </dt>
 
         <dd>
@@ -38,12 +38,13 @@
 
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
-    <div class="form-actions no-color">
-        <input type="submit" value="Delete" class="btn btn-default" /> |
-        @Html.ActionLink("Back", "Edit/" + Model.InvoiceId)
-    </div>
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back", "Edit/" + Model.InvoiceId)
+        </div>
     }
 </div>

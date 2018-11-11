@@ -8,74 +8,74 @@ namespace ninja.Models
     public class InvoiceViewModels
     {
         #region Cabecera
-        public string descripcionDetalle { get; set; }
-        public long CabeceraId { get; set; }
-        public long DetalleId { get; set; }
-        public string CabeceraTipo { get; set; }
-        public int CabeceraDetalleCantidad { get; set; }
-        public double CabeceraDetallePrecio { get; set; }
+        public string DetailDescription { get; set; }
+        public long InvoiceId { get; set; }
+        public long DetailID { get; set; }
+        public string Type { get; set; }
+        public int DetailCount { get; set; }
+        public double DetailPrice { get; set; }
         #endregion
 
         #region Contenido
-        public List<InvoicesDetailViewModel> FacturaDetalle { get; set; }
+        public IList<InvoicesDetailViewModel> InvoiceDetail { get; set; }
         #endregion
 
         #region Pie
         public double Total()
         {
-            return FacturaDetalle.Sum(x => x.Monto());
+            return InvoiceDetail.Sum(x => x.PriceWithTaxes());
         }
         #endregion
 
         public InvoiceViewModels()
         {
-            FacturaDetalle = new List<InvoicesDetailViewModel>();
+            InvoiceDetail = new List<InvoicesDetailViewModel>();
             Refrescar();
         }
 
         public void Refrescar()
         {
-            CabeceraId = 0;
-            DetalleId = 0;
-            CabeceraTipo = "";
-            CabeceraDetalleCantidad = 1;
-            CabeceraDetallePrecio = 0;
+            InvoiceId = 0;
+            DetailID = 0;
+            Type = "";
+            DetailCount = 1;
+            DetailPrice = 0;
         }
 
-        public bool SeAgregoUnaFacturaValida()
+        public bool NewInvoiceValid()
         {
-            return !(CabeceraId == 0 || DetalleId == 0 || string.IsNullOrEmpty(CabeceraTipo) || CabeceraDetalleCantidad == 0 || CabeceraDetallePrecio == 0);
+            return !(InvoiceId == 0 || DetailID == 0 || string.IsNullOrEmpty(Type) || DetailCount == 0 || DetailPrice == 0);
         }
 
-        public bool ExisteEnDetalle(long xDetalleId)
+        public bool ExistsInDetail(long xDetailID)
         {
-            return FacturaDetalle.Any(x => x.DetalleId == xDetalleId);
+            return InvoiceDetail.Any(x => x.DetailID == xDetailID);
         }
-        public bool ExisteEnDetalle(string xDetalleDesc)
+        public bool ExistsInDetail(string xDetalleDesc)
         {
-            return FacturaDetalle.Any(x => x.descripcion == xDetalleDesc);
+            return InvoiceDetail.Any(x => x.Description == xDetalleDesc);
         }
 
-        public void RetirarItemDeDetalle()
+        public void DeleteItemFromDetail()
         {
-            if (FacturaDetalle.Count > 0)
+            if (InvoiceDetail.Count > 0)
             {
-                var detalleARetirar = FacturaDetalle.Where(x => x.Retirar)
+                var detalleARemoveItem = InvoiceDetail.Where(x => x.RemoveItem)
                                                         .SingleOrDefault();
 
-                FacturaDetalle.Remove(detalleARetirar);
+                InvoiceDetail.Remove(detalleARemoveItem);
             }
         }
 
-        public void AgregarItemADetalle()
+        public void AddItemDetail()
         {
-            FacturaDetalle.Add(new InvoicesDetailViewModel
+            InvoiceDetail.Add(new InvoicesDetailViewModel
             {
-                descripcion = descripcionDetalle,
-                InvoiceId = CabeceraId,
-                PrecioUnitario = CabeceraDetallePrecio,
-                DetalleId = DetalleId,
-                Cantidad = CabeceraDetalleCantidad,
+                Description = DetailDescription,
+                InvoiceId = InvoiceId,
+                UnitPrice = DetailPrice,
+                DetailID = DetailID,
+                Amount = DetailCount,
             });
 
             Refrescar();
@@ -84,34 +84,74 @@ namespace ninja.Models
         public Invoice ToModel()
         {
             var sInvoice = new Invoice();
-            sInvoice.Id = this.CabeceraId;
-            sInvoice.Type = this.CabeceraTipo;
+            sInvoice.Id = this.InvoiceId;
+            sInvoice.Type = this.Type;
 
-            foreach (var sInvDetail in FacturaDetalle)
+            foreach (var sInvDetail in InvoiceDetail)
             {
                 sInvoice.AddDetail(new InvoiceDetail
                 {
-                    Id = sInvDetail.DetalleId,
+                    Id = sInvDetail.DetailID,
                     InvoiceId = sInvDetail.InvoiceId,
-                    UnitPrice = sInvDetail.PrecioUnitario,
-                    Amount = sInvDetail.Cantidad
+                    UnitPrice = sInvDetail.UnitPrice,
+                    Amount = sInvDetail.Amount
                 });
             }
 
             return sInvoice;
         }
+        public double CalculateInvoiceTotalPriceWithTaxes()
+        {
+
+            double sum = 0;
+
+            foreach (InvoicesDetailViewModel item in this.InvoiceDetail)
+                sum += item.TotalPriceWithTaxes;
+
+            return sum;
+
+        }
+        public double CalculateInvoiceTotalPriceWithOutTaxes()
+        {
+
+            double sum = 0;
+
+            foreach (InvoicesDetailViewModel item in this.InvoiceDetail)
+                sum += item.TotalPrice;
+
+            return sum;
+
+        }
     }
     public partial class InvoicesDetailViewModel
     {
-        public string descripcion { get; set; }
+        public string Description { get; set; }
         public long InvoiceId { get; set; }
-        public long DetalleId { get; set; }
-        public int Cantidad { get; set; }
-        public double PrecioUnitario { get; set; }
-        public bool Retirar { get; set; }
-        public double Monto()
+        public long DetailID { get; set; }
+        public double Amount { get; set; }
+        public double UnitPrice { get; set; }
+        public double Taxes { get; set; }
+        public bool RemoveItem { get; set; }
+        public double TotalPrice { get { return PriceWithTaxes(); } }
+        public double TotalPriceWithTaxes { get { return PriceWithTaxes(); } }
+
+        public double PriceWithOutTaxes()
         {
-            return Cantidad * PrecioUnitario;
+            return Amount * UnitPrice;
+        }
+        public double PriceWithTaxes()
+        {
+            return Amount * (UnitPrice + Taxes);
+        }
+
+       public InvoiceDetail toModel()
+        {
+            InvoiceDetail sDetailInv = new InvoiceDetail();
+            sDetailInv.Id = this.DetailID;
+            sDetailInv.InvoiceId = this.InvoiceId;
+            sDetailInv.UnitPrice = this.UnitPrice;
+            sDetailInv.Amount = this.Amount;
+            return sDetailInv;
         }
     }
 }
